@@ -1,0 +1,34 @@
+#Vérifiez que JBOSS termine le traitement de chaque commande, ouvrez deux consoles de commande:
+#Console 1
+# Faut pas arrêter de vérifier l'exécution de la commande
+tail -f /opt/jboss/standalone/log/server.log
+
+#Console 2
+#INSTALLER APPLICATION
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --file=/opt/scripts/conf-jboss01.cli;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --command=:reload;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --file=/opt/scripts/conf-jboss02.cli;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --command=:reload;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --file=/opt/scripts/conf-jboss03.cli;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --command=:reload;
+cd /opt/ejbca;
+sudo -u jboss ant clean deployear;
+sudo service jboss restart;
+sudo -u jboss ant runinstall;
+sudo -u jboss ant deploy-keystore; 
+sudo -u jboss ant clientToolBox;
+sudo  mv /opt/ejbca/dist/clientToolBox caToolBox;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --file=/opt/scripts/conf-jboss04.cli;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --command=:reload;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --file=/opt/scripts/conf-jboss05.cli;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --command=":shutdown(restart=true)";
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --file=/opt/scripts/conf-jboss06.cli;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --command=:reload;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --file=/opt/scripts/conf-jboss07.cli;
+sudo -u jboss /opt/jboss/bin/jboss-cli.sh --connect --command=":shutdown(restart=true)";
+
+##Ouvrir application 
+#copier le certificat d'identité électronique de /opt/ejbca/p12/superamin.p12
+#importez-le dans le navigateur de la machine autorisée à administrer le système.
+# Le mot de passe pour importer le certificat par défaut est  'egovmgkidona'.
+#http://1.2.3.4:8080/ejbca
